@@ -1,9 +1,15 @@
 #include <iostream>
 using namespace std;
 
+void initializeMatrix(int** matrix, int teams, int* players);
+
 int getSum(const int* const* matrix, int row, int players);
 
+void sortMatrix(int** matrix, int teams, int* players);
+
 void printMatrix(int** matrix, int teams, int* players);
+
+void enterPoints(int** matrix, int teams, int* players);
 
 int main() {
     int teams;
@@ -11,6 +17,26 @@ int main() {
 
     int** matrix = new int* [teams];
     int* players = new int [teams];
+
+    initializeMatrix(matrix, teams, players);
+
+    printMatrix(matrix, teams, players);
+
+    enterPoints(matrix, teams, players);
+
+    for (int i = 0; i < teams; i++) {
+        delete[] matrix[i];
+    }
+
+    delete[] matrix;
+    delete[] players;
+    return 0;
+}
+
+void initializeMatrix(int** matrix, int teams, int* players) {
+    if (!matrix || !players) {
+        return;
+    }
 
     for (int i = 0; i < teams; i++) {
         int pl;
@@ -23,36 +49,6 @@ int main() {
             matrix[i][j] = 0;
         }
     }
-
-    printMatrix(matrix, teams, players);
-
-    while (true)
-    {
-        int team, player, points;
-        cin >> team >> player >> points;
-
-        if (team < 0 || team > teams) {
-            cout << "Error" << endl;
-            continue;
-        }
-
-        if (player < 0 || player > players[team]) {
-            cout << "Error" << endl;
-            continue;
-        }
-
-        matrix[team][player] += points;
-        printMatrix(matrix, teams, players);
-    }
-    
-
-    for (int i = 0; i < teams; i++) {
-        delete[] matrix[i];
-    }
-
-    delete[] matrix;
-    delete[] players;
-    return 0;
 }
 
 int getSum(const int* const* matrix, int row, int players) {
@@ -69,7 +65,7 @@ int getSum(const int* const* matrix, int row, int players) {
     return sum;
 }
 
-void printMatrix(int** matrix, int teams, int* players) {
+void sortMatrix(int** matrix, int teams, int* players) {
     if (!matrix || !players) {
         return;
     }
@@ -97,10 +93,43 @@ void printMatrix(int** matrix, int teams, int* players) {
         }
     }
 
+}
+
+void printMatrix(int** matrix, int teams, int* players) {
+    if (!matrix || !players) {
+        return;
+    }
+
+    sortMatrix(matrix, teams, players);
+
     for (int i = 0; i < teams; i++) {
         for (int j = 0; j < players[i]; j++) {
             cout << matrix[i][j] << " ";
         }
         cout << endl;
+    }
+}
+
+void enterPoints(int** matrix, int teams, int* players) {
+    if (!matrix || !players) {
+        return;
+    }
+
+    while (true) {
+        int team, player, points;
+        cin >> team >> player >> points;
+
+        if (team < 0 || team > teams) {
+            cout << "Error" << endl;
+            continue;
+        }
+
+        if (player < 0 || player > players[team]) {
+            cout << "Error" << endl;
+            continue;
+        }
+
+        matrix[team][player] += points;
+        printMatrix(matrix, teams, players);
     }
 }
